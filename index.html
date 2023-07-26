@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Zone Converter</title>
+    <script src="luxon.js"></script>
+</head>
+<body>
+    <h1>Time Zone Converter</h1>
+    <p>Original Time Zone: <span id="originalTimeZone"></span></p>
+    <p id="originalTime"></p>
+    <p>Other Time Zones:</p>
+    <ul id="convertedTimes"></ul>
+
+    <script>
+        function convertTime(originalTime, fromTimezone, toTimezone) {
+            const dt = luxon.DateTime.fromJSDate(originalTime, { zone: fromTimezone });
+            const convertedTime = dt.setZone(toTimezone).toLocaleString(luxon.DateTime.TIME_SIMPLE);
+            return convertedTime;
+        }
+
+        function displayTime() {
+            // Extract the time zone parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const timezone = urlParams.get("timezone");
+
+            // Get the current time in the user's timezone
+            const now = new Date();
+            const options = { hour: "2-digit", minute: "2-digit" };
+            const originalTime = now.toLocaleTimeString([], options);
+
+            // Display the original time zone
+            document.getElementById("originalTimeZone").innerText = timezone;
+
+            // Display the original time
+            document.getElementById("originalTime").innerText = `Original Time (${timezone}): ${convertTime(now, "UTC", timezone)}`;
+
+            // Get all available time zones from Luxon
+            const timeZones = luxon.IANAZone.names();
+
+            // Display converted times for all time zones
+            const convertedTimesContainer = document.getElementById("convertedTimes");
+            convertedTimesContainer.innerHTML = "";
+
+            for (const tz of timeZones) {
+                if (tz !== timezone) {
+                    const convertedTime = convertTime(now, timezone, tz);
+                    const convertedTimeStr = `<li>Converted Time (${tz}): ${convertedTime}</li>`;
+                    convertedTimesContainer.innerHTML += convertedTimeStr;
+                }
+            }
+        }
+
+        // Call the displayTime function when the page loads
+        window.onload = displayTime;
+    </script>
+</body>
+</html>
