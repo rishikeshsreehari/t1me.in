@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ def convert_time(time_str):
     if time_str.endswith('IST'):
         zone = time_str[-3:]
         time_str = time_str[:-3]
-        return redirect(url_for('show_time', time=time_str,zone=zone))
+        return redirect(url_for('show_time', time=time_str, zone=zone))
 
     return 'Invalid URL format. Please use HHMMIST format.'
 
@@ -22,20 +22,23 @@ def convert_time(time_str):
 def show_time():
     time_str = request.args.get('time', '')
     zone = request.args.get('zone', '')
-    time_obj = datetime.strptime(time_str, '%H%M')
-    ist_time = time_obj.strftime('%H:%M')
-    
-    #timezone = pytz.timezone('Asia/Calcutta')
-    
-    # gmt_time = gmt_time.strftime('%H:%M')
 
-    # Convert IST time to other time zones
-    time_zones = {
-        'PST': time_obj - timedelta(hours=12),
-        'EST': time_obj - timedelta(hours=9),
-        'GMT': time_obj - timedelta(hours=5),
-    }
-    return render_template('time.html', ist_time=ist_time, time_zones=time_zones, zone=zone)
+    # Set timezone for the input time to IST explicitly
+    ist_tz = pytz.timezone('Asia/Kolkata')
+    time_obj = datetime.strptime(time_str, '%H%M')
+
+    common_time_zones = pytz.common_timezones
+    time_zones = {}
+    for tz in common_time_zones:
+        try:
+            tz_obj = pytz.timezone(tz)
+            localized_time_obj = ist_tz.localize(time_obj.replace(tzinfo=None), is_dst=None)
+            converted_time = localized_time_obj.astimezone(tz_obj).strftime('%H:%M')
+            time_zones[tz] = converted_time
+        except Exception as e:
+            print(f"Error occurred for timezone '{tz}': {e}")
+
+    return render_template('time.html', time_val=time_obj, time_zones=time_zones, zone=zone)
 
 
 if __name__ == '__main__':

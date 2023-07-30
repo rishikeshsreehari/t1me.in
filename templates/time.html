@@ -5,13 +5,28 @@
 </head>
 <body>
  
-    <h2>Current Zone is {{ zone }} and the Time is {{ ist_time }}  </h2>
-    <p>{{ ist_time }} {{ zone }} is:</p>
+    <h2>Current Zone is {{ zone }} and the Time is {{ time_val.strftime('%H:%M') }}  </h2>
+    <p>{{ time_val.strftime('%H:%M') }} {{ zone }} is:</p>
     <ul>
-        <li>{{ time_zones['PST'].strftime('%H:%M') }} PST</li>
-        <li>{{ time_zones['EST'].strftime('%H:%M') }} EST</li>
-        <li>{{ time_zones['GMT'].strftime('%H:%M') }} GMT</li>
+        <li>{{ time_zones['Asia/Kolkata'] }} Delhi</li>
+        <li>{{ time_zones['Europe/London'] }} London</li>
+        <li>{{ time_zones['US/Eastern'] }} New York</li>
+        <li>{{ time_zones['Asia/Tokyo'] }} Tokyo</li>
+        <li>{{ time_zones['Asia/Dubai'] }} Dubai</li>
+        <li>{{ time_zones['Australia/Sydney'] }} Sydney</li>
+        <li>{{ time_zones['Asia/Hong_Kong'] }} Hong Kong</li>
+        
+
+
+
         <!-- Add more time zones here as needed -->
+    </ul>
+
+    <h2>Equivalent Times in Common Time Zones</h2>
+    <ul>
+        {% for tz, time in time_zones.items() %}
+            <li>{{ tz }}: {{ time }}</li>
+        {% endfor %}
     </ul>
 </body>
 </html>
