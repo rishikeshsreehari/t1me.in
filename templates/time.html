@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Zone Converter</title>
+</head>
+<body>
+ 
+    <h2>Current Zone is {{ zone }} and the Time is {{ ist_time }}  </h2>
+    <p>{{ ist_time }} {{ zone }} is:</p>
+    <ul>
+        <li>{{ time_zones['PST'].strftime('%H:%M') }} PST</li>
+        <li>{{ time_zones['EST'].strftime('%H:%M') }} EST</li>
+        <li>{{ time_zones['GMT'].strftime('%H:%M') }} GMT</li>
+        <!-- Add more time zones here as needed -->
+    </ul>
+</body>
+</html>
