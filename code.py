@@ -23,8 +23,7 @@ def show_time():
     time_str = request.args.get('time', '')
     zone = request.args.get('zone', '')
 
-    # Set timezone for the input time to IST explicitly
-    ist_tz = pytz.timezone('Asia/Kolkata')
+    # Parse the input time
     time_obj = datetime.strptime(time_str, '%H%M')
 
     common_time_zones = pytz.common_timezones
@@ -32,7 +31,7 @@ def show_time():
     for tz in common_time_zones:
         try:
             tz_obj = pytz.timezone(tz)
-            localized_time_obj = ist_tz.localize(time_obj.replace(tzinfo=None), is_dst=None)
+            localized_time_obj = pytz.timezone('Asia/Kolkata').localize(datetime(datetime.utcnow().year, datetime.utcnow().month, datetime.utcnow().day, time_obj.hour, time_obj.minute), is_dst=None)
             converted_time = localized_time_obj.astimezone(tz_obj).strftime('%H:%M')
             time_zones[tz] = converted_time
         except Exception as e:
